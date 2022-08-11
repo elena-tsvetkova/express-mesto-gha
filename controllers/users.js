@@ -1,9 +1,5 @@
 const Users = require('../models/user');
-
-const ERROR_CODE = 400
-const NOT_FOUND_CODE = 404
-const CREATED_CODE = 201
-const INTERNAL_SERVER_ERROR = 500
+const codes = require('../codes')
 
 
 class NotFound extends Error {
@@ -17,7 +13,7 @@ module.exports.getUsers = (req, res) => {
   Users.find({})
     .then((user) => res.send({ user }))
     .catch(() => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -31,15 +27,11 @@ module.exports.getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'NotFound') {
-        res.status(NOT_FOUND_CODE).send({
-          message: 'Пользователь по указанному _id не найден.',
-        });
+        res.status(codes.NOT_FOUND).send({message: 'Пользователь не найден'});
       } else if (err.name === 'CastError') {
-        res.status(ERROR_CODE).send({
-          message: 'Пользователь по указанному _id не найден.',
-        });
+        res.status(codes.ERROR).send({message: 'Пользователь не найден'});
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -47,14 +39,12 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   Users.create({ name, about, avatar })
-    .then((user) => res.status(CREATED_CODE).send({ user }))
+    .then((user) => res.status(codes.CREATED).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({
-          message: 'Переданы некорректные данные при создании пользователя. ',
-        });
+        res.status(codes.ERROR).send({message: 'Переданы некорректные данные'});
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -76,15 +66,11 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({
-          message: 'Переданы некорректные данные при обновлении пользователя. ',
-        });
+        res.status(codes.ERROR).send({message: 'Переданы некорректные данные'});
       } else if (err.name === 'NotFound') {
-        res.status(NOT_FOUND_CODE).send({
-          message: 'Пользователь по указанному _id не найден.',
-        });
+        res.status(codes.NOT_FOUND).send({message: 'Пользователь не найден'});
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -106,15 +92,11 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({
-          message: 'Переданы некорректные данные при обновлении аватара. ',
-        });
+        res.status(codes.ERROR).send({message: 'Переданы некорректные данные'});
       } else if (err.name === 'NotFound') {
-        res.status(NOT_FOUND_CODE).send({
-          message: 'Пользователь по указанному _id не найден.',
-        });
+        res.status(codes.NOT_FOUND).send({message: 'Пользователь не найден'});
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
 };
