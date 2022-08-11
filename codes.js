@@ -1,4 +1,4 @@
-const ERROR = 400
+const ERROR = 400;
 const NOT_FOUND = 404;
 const CREATED = 201;
 const INTERNAL_SERVER_ERROR = 500;

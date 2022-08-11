@@ -1,6 +1,5 @@
 const Users = require('../models/user');
-const codes = require('../codes')
-
+const codes = require('../codes');
 
 class NotFound extends Error {
   constructor() {
@@ -27,9 +26,9 @@ module.exports.getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'NotFound') {
-        res.status(codes.NOT_FOUND).send({message: 'Пользователь не найден'});
+        res.status(codes.NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else if (err.name === 'CastError') {
-        res.status(codes.ERROR).send({message: 'Пользователь не найден'});
+        res.status(codes.ERROR).send({ message: 'Пользователь не найден' });
       } else {
         res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
@@ -42,7 +41,7 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(codes.CREATED).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(codes.ERROR).send({message: 'Переданы некорректные данные'});
+        res.status(codes.ERROR).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
@@ -66,9 +65,9 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(codes.ERROR).send({message: 'Переданы некорректные данные'});
+        res.status(codes.ERROR).send({ message: 'Переданы некорректные данные' });
       } else if (err.name === 'NotFound') {
-        res.status(codes.NOT_FOUND).send({message: 'Пользователь не найден'});
+        res.status(codes.NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else {
         res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
@@ -92,9 +91,9 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(codes.ERROR).send({message: 'Переданы некорректные данные'});
+        res.status(codes.ERROR).send({ message: 'Переданы некорректные данные' });
       } else if (err.name === 'NotFound') {
-        res.status(codes.NOT_FOUND).send({message: 'Пользователь не найден'});
+        res.status(codes.NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else {
         res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
