@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const users = require('./routes/users');
-// const cardRouter = require('./routes/cards');
+const cardRouter = require('./routes/cards');
 
 const { PORT = 3000 } = process.env;
 
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/', users);
-// app.use('/', cardRouter);
+app.use('/', cardRouter);
 app.use('*', (req, res) => {
   res.status(404).send({
     message: 'Страница не найдена',
