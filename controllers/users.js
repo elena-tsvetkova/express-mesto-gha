@@ -1,12 +1,9 @@
 const Users = require('../models/user');
 const codes = require('../codes');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const {Conflict, BadRequest, NotFound} = require("../errors");
 
-class NotFound extends Error {
-  constructor() {
-    super();
-    this.name = this.constructor.name;
-  }
-}
 
 module.exports.getUsers = (req, res) => {
   Users.find({})
@@ -35,15 +32,27 @@ module.exports.getUser = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  Users.create({ name, about, avatar })
-    .then((user) => res.status(codes.CREATED).send({ user }))
+module.exports.createUser = (req, res, next) => {
+  const {name, about, avatar, email, password} = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => Users.create({ name, about, avatar, email, password: hash }))
+    .then((user) => {
+      const userData = {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id,
+      };
+      res.status(codes.CREATED).send({userData})
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(codes.ERROR).send({ message: 'Переданы некорректные данные' });
+      if (err.code === 11000) {
+        next(new Conflict('Пользователь уже существует'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequest());
       } else {
-        res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(err);
       }
     });
 };
@@ -98,4 +107,14 @@ module.exports.updateAvatar = (req, res) => {
         res.status(codes.INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
     });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  return Users.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      return res.send({ token });
+    })
+    .catch(next);
 };
