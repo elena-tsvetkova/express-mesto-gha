@@ -1,13 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors, Joi, celebrate } = require('celebrate');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const {errors, Joi, celebrate} = require("celebrate");
-const {login, createUser} = require("./controllers/users");
-const {NotFound} = require("./errors");
-const {INTERNAL_SERVER_ERROR} = require("./codes");
+const { login, createUser } = require('./controllers/users');
+const { INTERNAL_SERVER_ERROR } = require('./codes');
+const NotFound = require('./errors/NotFound');
 
 const { PORT = 3000 } = process.env;
 const app = express();
