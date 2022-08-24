@@ -40,13 +40,7 @@ module.exports.getThisUser = (req, res, next) => {
     .then((user) => {
       res.send({ user });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Пользователь не найден.'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 module.exports.createUser = (req, res, next) => {
